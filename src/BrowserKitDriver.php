@@ -477,7 +477,7 @@ class BrowserKitDriver extends CoreDriver
             $this->client->click($crawler->link());
             $this->forms = array();
         } elseif ($this->canSubmitForm($node)) {
-            $this->submit($crawler->form());
+            $this->submitFormWith($crawler->form(), $node);
         } elseif ($this->canResetForm($node)) {
             $this->resetForm($node);
         } else {
@@ -669,6 +669,20 @@ class BrowserKitDriver extends CoreDriver
         }
 
         return 0;
+    }
+
+    private function submitFormWith(Form $form, \DOMElement $submit_element)
+    {
+
+        if ($formaction = $submit_element->getAttribute('formaction')) {
+            $form->getNode()->setAttribute('action', $formaction);
+        }
+
+        if ($formmethod = $submit_element->getAttribute('formmethod')) {
+            $form->getNode()->setAttribute('method', $formmethod);
+        }
+
+        $this->submit($form);
     }
 
     private function submit(Form $form)
